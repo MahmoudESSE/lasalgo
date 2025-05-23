@@ -1,0 +1,19 @@
+[package]
+name = "lasalgo"
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0"
+authors = ["MahmoudESSE <mahmoudessehayli@gmail.com>"]
+readme = "README.md"
+repository = "github.com/MahmoudESSE/lasalgo"
+description = "visualization of sorting algorithms"
+keywords = ["sort", "visualize"]
+categories = ["algorithms", "computer-vision", "data-structures", "gui"]
+publish = false
+
+[dependencies]
+piston = "1.0.0"
+piston2d-graphics = "0.44.0"
+pistoncore-glutin_window = "0.72.0"
+piston2d-opengl_graphics = "0.85.0"
+rand = "0.8.0"
