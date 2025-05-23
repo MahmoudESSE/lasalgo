@@ -43,7 +43,8 @@ impl App {
                     color::WHITE
                 };
 
-                let x: f64 = x as f64;
+                let scale = 2.0;
+                let x: f64 = x as f64 * scale;
                 let y_start = screen_height;
                 let y_end = screen_height - length;
 
