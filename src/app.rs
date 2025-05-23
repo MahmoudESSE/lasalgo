@@ -43,8 +43,9 @@ impl App {
                     color::WHITE
                 };
 
-                let scale = 2.0;
+                let scale = 6.0;
                 let x: f64 = x as f64 * scale;
+                let length = length * scale;
                 let y_start = screen_height;
                 let y_end = screen_height - length;
 
@@ -65,7 +66,7 @@ impl App {
         self.sort_started = None;
         self.sort_duration = None;
         self.search_result = None;
-        self.values = (0..1000).map(|x| x as f64).collect();
+        self.values = (0..100).map(|x| x as f64).collect();
         self.scramble_values();
     }
 

@@ -1,5 +1,3 @@
-use std::usize;
-
 use glutin_window::{GlutinWindow, OpenGL};
 use lasalgo::app::{Algorithm, App};
 use opengl_graphics::GlGraphics;
@@ -11,13 +9,13 @@ use rand::{Rng, distributions::Uniform, thread_rng};
 fn main() {
     let opengl = OpenGL::V3_2;
 
-    let mut window: GlutinWindow = WindowSettings::new("lasalgo", [1920, 1080])
+    let mut window: GlutinWindow = WindowSettings::new("lasalgo", [600, 600])
         .graphics_api(opengl)
         .exit_on_esc(true)
         .build()
         .unwrap();
 
-    let values: Vec<f64> = (0..1000).map(|x| x as f64).collect();
+    let values: Vec<f64> = (0..100).map(|x| x as f64).collect();
 
     let mut app = App {
         gl: GlGraphics::new(opengl),
@@ -57,7 +55,7 @@ fn main() {
                 Key::D3 => {
                     println!("Running linear search");
                     let mut rng = thread_rng();
-                    app.search = rng.sample(Uniform::new(0usize, 1000));
+                    app.search = rng.sample(Uniform::new(0usize, 100));
                     println!("Searching for {:?}", app.search);
                     app.set_algorithm(Algorithm::LinearSearch);
                 }
