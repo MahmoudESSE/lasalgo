@@ -13,14 +13,16 @@ pub struct App {
     pub search_result: Option<usize>,
     pub i: usize,
     pub j: usize,
-    pub sort_started: Option<Instant>,
-    pub sort_duration: Option<Duration>,
+    pub low: usize,
+    pub high: usize,
+    pub algo_started: Option<Instant>,
+    pub algo_duration: Option<Duration>,
     pub algorithm: Algorithm,
 }
 
 pub enum Algorithm {
     BubbleSort,
-    QuickSort,
+    BinarySearch,
     LinearSearch,
 }
 
@@ -61,13 +63,14 @@ impl App {
     pub fn set_algorithm(&mut self, algorithm: Algorithm) {
         self.algorithm = algorithm;
         self.completed = false;
+        self.values = (0..100).map(|x| x as f64).collect();
+        self.algo_started = None;
+        self.algo_duration = None;
+        self.search_result = None;
         self.i = 0;
         self.j = 0;
-        self.sort_started = None;
-        self.sort_duration = None;
-        self.search_result = None;
-        self.values = (0..100).map(|x| x as f64).collect();
-        self.scramble_values();
+        self.low = 0;
+        self.high = self.values.len();
     }
 
     fn step(&mut self, steps: usize) {
@@ -77,7 +80,7 @@ impl App {
 
         match self.algorithm {
             Algorithm::BubbleSort => self.bubble_sort(steps),
-            Algorithm::QuickSort => self.quick_sort(steps),
+            Algorithm::BinarySearch => self.binary_search(steps),
             Algorithm::LinearSearch => self.linear_search(steps),
         }
     }
@@ -91,8 +94,8 @@ impl App {
             return;
         }
 
-        if self.sort_started.is_none() {
-            self.sort_started = Some(Instant::now());
+        if self.algo_started.is_none() {
+            self.algo_started = Some(Instant::now());
         }
 
         for _ in 0..steps {
@@ -108,8 +111,8 @@ impl App {
                 }
             } else {
                 self.completed = true;
-                self.sort_duration = self.sort_started.map(|start| start.elapsed());
-                if let Some(duration) = self.sort_duration {
+                self.algo_duration = self.algo_started.map(|start| start.elapsed());
+                if let Some(duration) = self.algo_duration {
                     println!("Bubble Sort completed in {:.2?}", duration);
                 }
                 break;
@@ -117,25 +120,13 @@ impl App {
         }
     }
 
-    fn quick_sort(&mut self, steps: usize) {
-        if self.completed {
-            return;
-        }
-
-        if self.sort_started.is_none() {
-            self.sort_started = Some(Instant::now());
-        }
-
-        for _ in 0..steps {}
-    }
-
     fn linear_search(&mut self, steps: usize) {
         if self.completed {
             return;
         }
 
-        if self.sort_started.is_none() {
-            self.sort_started = Some(Instant::now());
+        if self.algo_started.is_none() {
+            self.algo_started = Some(Instant::now());
         }
 
         let needle = self.search.to_f64().unwrap();
@@ -145,8 +136,8 @@ impl App {
                 if self.values[self.j] == needle {
                     self.completed = true;
                     self.search_result = Some(self.j);
-                    self.sort_duration = self.sort_started.map(|start| start.elapsed());
-                    if let Some(duration) = self.sort_duration {
+                    self.algo_duration = self.algo_started.map(|start| start.elapsed());
+                    if let Some(duration) = self.algo_duration {
                         println!(
                             "Linear Search found {} at index {} in {:.2?}",
                             needle, self.j, duration
@@ -159,11 +150,52 @@ impl App {
             } else {
                 self.completed = true;
                 self.search_result = Some(self.j);
-                self.sort_duration = self.sort_started.map(|start| start.elapsed());
-                if let Some(duration) = self.sort_duration {
+                self.algo_duration = self.algo_started.map(|start| start.elapsed());
+                if let Some(duration) = self.algo_duration {
                     println!("Linear Search completed in {:.2?}", duration);
                 }
                 break;
+            }
+        }
+    }
+
+    fn binary_search(&mut self, steps: usize) {
+        if self.completed {
+            return;
+        }
+
+        if self.algo_started.is_none() {
+            self.algo_started = Some(Instant::now());
+        }
+
+        let needle = self.search.to_f64().unwrap();
+
+        for _ in 0..steps {
+            if self.low >= self.high {
+                self.completed = true;
+                self.search_result = Some(self.j);
+                self.algo_duration = self.algo_started.map(|start| start.elapsed());
+                if let Some(duration) = self.algo_duration {
+                    println!("Binary Search completed in {:.2?}", duration);
+                }
+                break;
+            }
+            let middle = self.low + (self.high - self.low) / 2;
+            self.j = middle;
+            let value = self.values[middle];
+
+            if value == needle {
+                self.completed = true;
+                self.search_result = Some(self.j);
+                self.algo_duration = self.algo_started.map(|start| start.elapsed());
+                if let Some(duration) = self.algo_duration {
+                    println!("Binary Search completed in {:.2?}", duration);
+                }
+                return;
+            } else if value < needle {
+                self.low = middle + 1;
+            } else {
+                self.high = middle + 1;
             }
         }
     }
